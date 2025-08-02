@@ -4,6 +4,8 @@ import cv2
 import mediapipe as mp
 import time
 import random
+import math
+import sys
 
 pygame.init()
 pygame.mixer.init()
@@ -13,10 +15,16 @@ GRID_WIDTH = 6
 GRID_HEIGHT = 8
 WIDTH = GRID_WIDTH * TILE_SIZE
 HEIGHT = GRID_HEIGHT * TILE_SIZE
+
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Maze Adventure")
 
 BLACK, WHITE, BLUE, GREEN, RED = (0,0,0), (255,255,255), (0,120,255), (0,255,0), (255,0,0)
+ACCENT_COLOR = (0, 200, 150) 
+HOVER_COLOR = (255, 180, 0)   
+TEXT_COLOR = (230, 230, 230)
+BG_COLOR = (20, 25, 35)
 
 THEMES = {
     "forest": {
@@ -64,6 +72,151 @@ current_theme = "forest"
 score = 0
 stars_collected = 0
 total_stars = 0
+
+
+
+def calculate_positions(num_items):
+    item_size = 100
+    spacing = 135
+    
+    cols = min(num_items, 2)
+    rows = math.ceil(num_items / cols)
+    
+    total_width = cols * spacing - (spacing - item_size)
+    total_height = rows * spacing - (spacing - item_size)
+    
+    start_x = (WIDTH - total_width) // 2
+    start_y = (HEIGHT - total_height) // 2 + 30
+    
+    positions = []
+    for i in range(num_items):
+        row = i // cols
+        col = i % cols
+        x = start_x + col * spacing
+        y = start_y + row * spacing
+        positions.append((x, y))
+    
+    return positions
+
+
+def draw_character_card(screen, image, name, x, y, size, is_hovered, font=pygame.font.SysFont("arial", 20)):
+    if is_hovered:
+        scale = 1.1
+        color = HOVER_COLOR
+        float_offset = math.sin(pygame.time.get_ticks() * 0.008) * 5
+    else:
+        scale = 1.0
+        color = ACCENT_COLOR
+        float_offset = 0
+    
+    scaled_size = int(size * scale)
+    draw_x = x + (size - scaled_size) // 2
+    draw_y = y + (size - scaled_size) // 2 + float_offset
+    
+    bg_rect = pygame.Rect(draw_x - 10, draw_y - 10, scaled_size + 20, scaled_size + 20)
+    pygame.draw.rect(screen, (40, 50, 65), bg_rect, border_radius=15)
+    
+    border_rect = pygame.Rect(draw_x - 5, draw_y - 5, scaled_size + 10, scaled_size + 10)
+    pygame.draw.rect(screen, color, border_rect, 3, border_radius=10)
+    
+    scaled_image = pygame.transform.scale(image, (scaled_size, scaled_size))
+    screen.blit(scaled_image, (draw_x, draw_y))
+    
+    clean_name = name.replace('.png', '').replace('.jpg', '').replace('.jpeg', '')
+    name_surface = font.render(clean_name, True, TEXT_COLOR)
+    name_rect = name_surface.get_rect(center=(x + size//2, draw_y + scaled_size + 25))
+    
+    shadow_surface = font.render(clean_name, True, (0, 0, 0))
+    # screen.blit(shadow_surface, (name_rect.x + 2, name_rect.y + 2))
+    # screen.blit(name_surface, name_rect)
+    
+    return pygame.Rect(x, y, size, size)
+
+def draw_gradient_background(screen):
+    for y in range(HEIGHT):
+        factor = y / HEIGHT
+        r = int(BG_COLOR[0] + factor * 10)
+        g = int(BG_COLOR[1] + factor * 15)
+        b = int(BG_COLOR[2] + factor * 20)
+        pygame.draw.line(screen, (r, g, b), (0, y), (WIDTH, y))
+
+def load_characters():
+    characters = []
+    folder = os.path.join(os.path.dirname(__file__), CHARACTERS_DIR)
+    
+    if not os.path.exists(folder):
+        return characters
+    
+    for filename in os.listdir(folder):
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+            try:
+                path = os.path.join(folder, filename)
+                img = pygame.image.load(path).convert_alpha()
+                characters.append((img, filename))
+            except:
+                pass
+    
+    return characters
+
+def character_selection():
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Character Selection")
+    clock = pygame.time.Clock()
+    
+    
+    characters = load_characters()
+    if not characters:
+        return None
+    
+    char_size = 100
+    pixelated_characters = []
+    for img, name in characters:
+        scaled_img = pygame.transform.scale(img, (char_size, char_size))
+        pixelated_characters.append((scaled_img, name))
+    
+    positions = calculate_positions(len(pixelated_characters))
+    
+    selected_character = None
+    running = True
+    
+    while running:
+        mouse_pos = pygame.mouse.get_pos()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit()
+            
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    pygame.quit()
+                    sys.exit()
+            
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for i, (img, name) in enumerate(pixelated_characters):
+                    x, y = positions[i]
+                    rect = pygame.Rect(x, y, char_size, char_size)
+                    if rect.collidepoint(mouse_pos):
+                        selected_character = img
+                        running = False
+                        break
+        
+        draw_gradient_background(screen)
+        
+        for i, (img, name) in enumerate(pixelated_characters):
+            x, y = positions[i]
+            rect = pygame.Rect(x, y, char_size, char_size)
+            is_hovered = rect.collidepoint(mouse_pos)
+            
+            draw_character_card(screen, img, name, x, y, char_size, is_hovered)
+        
+        pygame.display.flip()
+        clock.tick(60)
+    
+    return selected_character
 
 def load_random_character():
     try:
@@ -354,7 +507,7 @@ def next_maze(mazes, idx):
     global total_stars, stars_collected
     idx += 1
     if idx < len(mazes):
-        new_character = load_random_character()
+        # new_character = load_random_character()
         new_maze = mazes[idx]
         
         themes_list = list(THEMES.keys())
@@ -371,7 +524,7 @@ def next_maze(mazes, idx):
                 if tile == 4:
                     stars_pos.append((x, y))
         
-        return idx, new_maze, find_start(new_maze), new_character, stars_pos
+        return idx, new_maze, find_start(new_maze), stars_pos
     return None, None, (0, 0), None, []
 
 def show_game_over():
@@ -602,7 +755,7 @@ def draw_help():
 
 def main():
     global maze_index, score, stars_collected, total_stars, camera_on
-    
+    current_character = character_selection()
     mazes = load_mazes_from_file(MAZE_FILE)
     maze_index = 0
     maze = mazes[maze_index]
@@ -617,7 +770,7 @@ def main():
     
     change_theme(current_theme)
     
-    current_character = character_image
+    # current_character = character_image
     hand_controller = HandGestureController()
     
     cap, camera_on, help_on = None, False, False
@@ -717,7 +870,7 @@ def main():
                 if result[0] is not None:
                     if done_sound:
                         done_sound.play()
-                    maze_index, maze, (player_x, player_y), current_character, stars_positions = result
+                    maze_index, maze, (player_x, player_y), stars_positions = result
                     print(f"New level! Theme: {THEMES[current_theme]['name']}")
                     pygame.time.delay(500)
                 else:
