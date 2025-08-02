@@ -39,18 +39,21 @@ This game is an interactive maze-based game built using **Python**, **Pygame**, 
 ## 📁 Folder Structure
 
 ```
-maze_game/
+
+├── main.py              
+├── game/
+│   ├── __init__.py
+│   ├── game_state.py    
+│   ├── maze.py          
+│   ├── player.py        
+│   ├── ui.py     
+│   └── game.py           
+├── controllers/
+│   └── hand_controller.py
 ├── assets/
-│   ├── characters/      # Character PNGs
-│   ├── themes/          # Theme folders (each with star.png & music.mp3)
-│   ├── sounds/          
-│   ├── camera.png
-│   ├── help.png
-│   └── exit.png
-├── mazes.txt            
-├── game.py              # Game logic
-├── requirements.txt
-└── README.md
+│   └── asset_manager.py
+└── config.py  
+         
 ```
 
 ---
@@ -60,8 +63,8 @@ maze_game/
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/sabihdordab/VoxPixel.git
-   cd VoxPixel
+   git clone https://github.com/sabihdordab/Maze-Adventure.git
+   cd Maze-Adventure
    ```
 
 2. **Create a virtual environment (optional but recommended):**
@@ -80,7 +83,7 @@ maze_game/
 4. **Run the game:**
 
    ```bash
-   python game.py
+   python main.py
    ```
 
 ---
