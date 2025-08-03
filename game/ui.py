@@ -50,10 +50,6 @@ class UI:
                         star_rect.center = (x*TILE_SIZE + TILE_SIZE//2, y*TILE_SIZE + TILE_SIZE//2)
                         self.screen.blit(star_img, star_rect)
 
-        fog_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-        pygame.draw.circle(fog_surface, (200, 200, 200, 50), (WIDTH//2, HEIGHT//2), 300)
-        self.screen.blit(fog_surface, (0, 0))
-
     
     def draw_player(self, player, character_img):
         x, y = player.get_position()
@@ -280,7 +276,7 @@ class CharacterSelection:
         item_size = 100
         spacing = 135
         
-        cols = min(num_items, 2)
+        cols = min(num_items, 4)
         rows = math.ceil(num_items / cols)
         
         total_width = cols * spacing - (spacing - item_size)
@@ -306,7 +302,7 @@ class CharacterSelection:
             float_offset = math.sin(pygame.time.get_ticks() * 0.008) * 5
         else:
             scale = 1.0
-            color = Colors.ACCENT_COLOR
+            color = (255,255,255)
             float_offset = 0
         
         scaled_size = int(size * scale)

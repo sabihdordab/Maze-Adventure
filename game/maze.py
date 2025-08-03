@@ -69,9 +69,10 @@ class Maze:
         
         for y, row in enumerate(self.data):
             for x, tile in enumerate(row):
-                if tile == TileType.WALL and random.random() < 0.1: 
-                    if (x, y) not in self.item_positions:
-                        self.item_positions[(x, y)] = random.choice(items)
+                if random.random() < 0.1:
+                    if tile == TileType.WALL and len(self.item_positions) < len(items): 
+                        if (x, y) not in self.item_positions:
+                            self.item_positions[(x, y)] = random.choice(items)
 
 class MazeLoader:
     @staticmethod
