@@ -9,11 +9,13 @@ class AssetManager:
         self.theme_assets = {}
         self.sounds = {}
         self.ui_images = {}
+        self.items = {}
         
     def load_all_assets(self):
         self.load_characters()
         self.load_ui_images()
         self.load_sounds()
+        self.load_items()
         
     def load_characters(self):
         if not os.path.exists(CHARACTERS_DIR):
@@ -54,7 +56,9 @@ class AssetManager:
                 assets['music'] = music_path
             else:
                 assets['music'] = None
-                
+
+            assets['items'] = self.items.get(theme_name, [])      
+            
         except Exception as e:
             print(f"Error loading theme assets for {theme_name}: {e}")
             # Create default star if everything fails
@@ -109,7 +113,26 @@ class AssetManager:
                     self.ui_images[ui_name] = surface
             except Exception as e:
                 print(f"Error loading UI image {filename}: {e}")
-                
+    def load_items(self):
+        for theme_name in os.listdir(THEMES_DIR):
+            theme_path = os.path.join(THEMES_DIR, theme_name)
+            if not os.path.isdir(theme_path):
+                continue
+            items_path = os.path.join(theme_path, "items")
+            if not os.path.exists(items_path):
+                continue
+            item_images = []
+            for filename in os.listdir(items_path):
+                if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                    try:
+                        path = os.path.join(items_path, filename)
+                        img = pygame.image.load(path).convert_alpha()
+                        img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
+                        item_images.append(img)
+                    except Exception as e:
+                        print(f"Error loading item {filename} for theme {theme_name}: {e}")
+            self.items[theme_name] = item_images       
+
     def get_character(self, filename=None):
         if not self.characters:
             return None

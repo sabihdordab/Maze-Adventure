@@ -64,7 +64,7 @@ class Game:
         new_theme = themes_list[level_index % len(themes_list)]
         self.game_state.change_theme(new_theme)
         self.asset_manager.play_theme_music(new_theme)
-        
+        self.current_maze.generate_item_positions(new_theme, self.asset_manager)
         print(f"Level {level_index + 1} started! Theme: {THEMES[new_theme]['name']}")
     
     def handle_input(self):

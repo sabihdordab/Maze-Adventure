@@ -1,8 +1,9 @@
 from config import TileType, MAZE_FILE
-
+import random
 class Maze:
     def __init__(self, maze_data):
         self.data = maze_data
+        self.item_positions = {}
         self.stars_positions = self._find_stars()
         
     def _find_stars(self):
@@ -61,6 +62,16 @@ class Maze:
     def get_height(self):
         return len(self.data)
 
+    def generate_item_positions(self, theme_name, asset_manager):
+        items = asset_manager.get_theme_assets(theme_name)['items']
+        if not items:
+            return
+        
+        for y, row in enumerate(self.data):
+            for x, tile in enumerate(row):
+                if tile == TileType.WALL and random.random() < 0.1: 
+                    if (x, y) not in self.item_positions:
+                        self.item_positions[(x, y)] = random.choice(items)
 
 class MazeLoader:
     @staticmethod

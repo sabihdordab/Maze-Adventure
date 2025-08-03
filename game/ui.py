@@ -29,6 +29,11 @@ class UI:
                 
                 if tile == TileType.WALL:
                     pygame.draw.rect(self.screen, theme["wall"], rect)
+                    if (x, y) in maze.item_positions:
+                        item = maze.item_positions[(x, y)]
+                        item_rect = item.get_rect()
+                        item_rect.center = rect.center
+                        self.screen.blit(item, item_rect)
                 elif tile == TileType.PATH:
                     pygame.draw.rect(self.screen, theme["path"], rect)
                 elif tile == TileType.START:
@@ -39,9 +44,16 @@ class UI:
                     pygame.draw.rect(self.screen, theme["path"], rect)
                     if maze.has_star_at(x, y):
                         star_img = self.asset_manager.get_theme_assets(theme_name)['star']
+                        scale_factor = 0.5 + 0.1 * math.sin(pygame.time.get_ticks() * 0.01)
+                        star_img = pygame.transform.scale(star_img, (int(TILE_SIZE * scale_factor), int(TILE_SIZE * scale_factor)))
                         star_rect = star_img.get_rect()
                         star_rect.center = (x*TILE_SIZE + TILE_SIZE//2, y*TILE_SIZE + TILE_SIZE//2)
                         self.screen.blit(star_img, star_rect)
+
+        fog_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        pygame.draw.circle(fog_surface, (200, 200, 200, 50), (WIDTH//2, HEIGHT//2), 300)
+        self.screen.blit(fog_surface, (0, 0))
+
     
     def draw_player(self, player, character_img):
         x, y = player.get_position()
