@@ -314,7 +314,7 @@ class CharacterSelection:
         draw_y = y + (size - scaled_size) // 2 + float_offset
         
         bg_rect = pygame.Rect(draw_x - 10, draw_y - 10, scaled_size + 20, scaled_size + 20)
-        pygame.draw.rect(self.screen, (40, 50, 65), bg_rect, border_radius=15)
+        pygame.draw.rect(self.screen, (240, 0, 65), bg_rect, border_radius=15)
         
         border_rect = pygame.Rect(draw_x - 5, draw_y - 5, scaled_size + 10, scaled_size + 10)
         pygame.draw.rect(self.screen, color, border_rect, 3, border_radius=10)

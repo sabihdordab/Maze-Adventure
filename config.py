@@ -17,7 +17,7 @@ class Colors:
     ACCENT_COLOR = (0, 200, 150)
     HOVER_COLOR = (255, 180, 0)
     TEXT_COLOR = (230, 230, 230)
-    BG_COLOR = (20, 25, 35)
+    BG_COLOR = (20, 25, 100)
 
 # Game Settings
 class GameSettings:
@@ -51,7 +51,7 @@ THEMES = {
         "wall": (255, 105, 180),   
         "path": (255, 182, 193),   
         "start": (255, 20, 147),   
-        "goal": (255, 223, 186),   
+        "goal": (0, 128, 255),   
         "bg": (255, 105, 180), 
         "name": "Candyland"
     },
@@ -59,7 +59,7 @@ THEMES = {
         "wall": (135, 206, 250),   
         "path": (240, 248, 255),  
         "start": (0, 128, 255),    
-        "goal": (255, 250, 250),
+        "goal": (0, 128, 255),
         "bg": (135, 206, 250),
         "name": "Winter"
     },
