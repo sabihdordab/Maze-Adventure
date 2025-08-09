@@ -27,7 +27,7 @@ class AssetManager:
                     path = os.path.join(CHARACTERS_DIR, filename)
                     img = pygame.image.load(path).convert_alpha()
                     # Scale to fit tile size
-                    img = pygame.transform.scale(img, (TILE_SIZE-10, TILE_SIZE-10))
+                    img = pygame.transform.scale(img, (TILE_SIZE+50, TILE_SIZE+50))
                     self.characters[filename] = img
                 except Exception as e:
                     print(f"Error loading character {filename}: {e}")

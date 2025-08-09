@@ -273,7 +273,7 @@ class CharacterSelection:
         self.asset_manager = asset_manager
         
     def calculate_positions(self, num_items):
-        item_size = 100
+        item_size = 300
         spacing = 135
         
         cols = min(num_items, 4)
@@ -310,7 +310,7 @@ class CharacterSelection:
         draw_y = y + (size - scaled_size) // 2 + float_offset
         
         bg_rect = pygame.Rect(draw_x - 10, draw_y - 10, scaled_size + 20, scaled_size + 20)
-        pygame.draw.rect(self.screen, (240, 0, 65), bg_rect, border_radius=15)
+        pygame.draw.rect(self.screen, (10, 10, 10), bg_rect, border_radius=15)
         
         border_rect = pygame.Rect(draw_x - 5, draw_y - 5, scaled_size + 10, scaled_size + 10)
         pygame.draw.rect(self.screen, color, border_rect, 3, border_radius=10)
@@ -339,7 +339,7 @@ class CharacterSelection:
         if not characters:
             return None
         
-        char_size = 100
+        char_size = 200
         positions = self.calculate_positions(len(characters))
         
         selected_character = None
