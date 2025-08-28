@@ -15,9 +15,9 @@ class Colors:
     GREEN = (0, 255, 0)
     RED = (255, 0, 0)
     ACCENT_COLOR = (0, 200, 150)
-    HOVER_COLOR = (255, 180, 0)
+    HOVER_COLOR = (254, 119, 67)
     TEXT_COLOR = (230, 230, 230)
-    BG_COLOR = (20, 25, 100)
+    BG_COLOR = (39, 63, 79)
 
 # Game Settings
 class GameSettings:
